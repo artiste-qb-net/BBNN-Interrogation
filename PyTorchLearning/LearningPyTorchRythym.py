@@ -11,4 +11,5 @@ PyTorch Rythym
 
 import torch
 from torch.autograd import Variable
-x_data = Variable(torch.Tensor())
+
+x_data = Variable(torch.Tensor([4]))

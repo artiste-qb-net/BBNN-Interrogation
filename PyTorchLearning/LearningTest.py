@@ -41,7 +41,7 @@ learning_rate = 0.01
 x_data = [1.0, 2.0, 3.0]
 y_data = [2.0, 4.0, 6.0]
 
-w = Variable(torch.Tensor([3.0]), requires_grad = True)## any random values inside the tensor as of rn
+w = Variable(torch.Tensor([3.0]), requires_grad = True)## any Test.py values inside the tensor as of rn
 
 for generation in range(25):
     for x_Val, y_Val in zip(x_data, y_data):
