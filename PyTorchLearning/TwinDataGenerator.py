@@ -1,19 +1,28 @@
-import Test
+import random
 import json
 from pprint import pprint
 import time
 
 class TwinDataGenerator:
-    numSamples = 125
-    dataset = []
-    
+    numSamples = 1000
 
-    def __init__(self, datasetArr):
+
+    def init_with_dataset(self, datasetArr):
         finalData = []
         for i in range(self.numSamples):
-            finalData.append(dict(Test.choice(datasetArr)))
+            finalData.append(dict(random.choice(datasetArr)))
         self.dataset = finalData
-    
+
+    def __init__(self, file_name_json):
+        self.dataset = None
+        with open(file_name_json) as f:
+            self.dataset = json.load(f)
+
+        self.stats = self.dataset[-1]
+        self.dataset = self.dataset[:-1]
+        self.init_with_dataset(self.datasetdataset)
+
+
 
     def genDiscreteTwinData(self, optionsArr, attrName):
         twinData = {}
@@ -26,7 +35,6 @@ class TwinDataGenerator:
         assert len(self.dataset) > 0 and self.dataset[0].__contains__(attrName)
         categoryData = []
         for i in self.dataset:
-            copy = {}
             copy = dict(i)
             copy[attrName] = attrValue
             categoryData.append(copy)
@@ -35,25 +43,3 @@ class TwinDataGenerator:
 
 
 ### Main ###
-
-dataset = []
-
-with open('CreditScoreData.json') as f:
-    dataset = json.load(f)
-
-stats = dataset[-1]
-dataset = dataset[:-1]
-
-
-
-pprint(stats)
-
-time.sleep(1)
-
-dataset = dataset[:len(dataset) -1]
-
-twinDataGen = TwinDataGenerator(dataset)
-
-twinData = twinDataGen.genDiscreteTwinData(['High School', 'college', 'masters', 'phd', 'genius'], 'education')
-
-pprint(twinData)
