@@ -1,7 +1,15 @@
-from torch.autograd import Variable
-import torch
+from pprint import pprint
 
-a = Variable(torch.Tensor([[3.], [4.], [5.]]))
-print(a)
-print(a.size()[1])
-print(torch.nn.Sigmoid(0))
+a = []
+for i in range(3):
+    a.append(set())
+a[2].add(2)
+a[1].add(67)
+a[0].add(2)
+a[2].add(34)
+a[1].add(67)
+a[1].add(67)
+a[0].add(6867)
+a[1].add(2)
+
+pprint(a)

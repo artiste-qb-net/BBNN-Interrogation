@@ -10,7 +10,7 @@ import TwinDataGenerator
 
 class Network(torch.nn.Module):
     ############ Helper methods ####################
-    def generateDictFromDiscrete(optionsArr):
+    def generate_dict_from_discrete(optionsArr):
         result = {}
         denom = 1.0 * len(optionsArr) - 1
         ctr = 0
@@ -33,11 +33,11 @@ class Network(torch.nn.Module):
                     'ja_JP', 'ko_KR', 'lt_LT', 'lv_LV', 'ne_NP', 'nl_NL', 'no_NO', 'pl_PL', 'pt_BR', 'pt_PT',
                     'ro_RO',
                     'ru_RU', 'sl_SI', 'sv_SE', 'tr_TR', 'uk_UA', 'zh_CN', 'zh_TW', 'ka_GE']
-    citizenshipDict = generateDictFromDiscrete(citizenships)
+    citizenshipDict = generate_dict_from_discrete(citizenships)
     races = ['almond', 'oreo', 'quaker']
-    racesDict = generateDictFromDiscrete(races)
+    racesDict = generate_dict_from_discrete(races)
     educ = ['High School', 'college', 'masters', 'phd', 'genius']
-    educationDict = generateDictFromDiscrete(educ)
+    educationDict = generate_dict_from_discrete(educ)
 
     ######### Sigmoid/Relu functions for The different vairables############
 
@@ -72,6 +72,9 @@ class Network(torch.nn.Module):
 
     def sigmoid_gender(gender_int):
         return gender_int
+
+    def to_data_tensor():
+        return
 
     def genDataSetFromJson(fileName_str):
         dataset = []
@@ -197,6 +200,7 @@ class Network(torch.nn.Module):
 '''
 ### Main ###
 net = Network("CreditScoreData.json")
+net.check()
 
 
 

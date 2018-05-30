@@ -1,7 +1,6 @@
 import random
 import json
-from pprint import pprint
-import time
+
 
 class TwinDataGenerator:
     numSamples = 1000
@@ -20,11 +19,11 @@ class TwinDataGenerator:
 
         self.stats = self.dataset[-1]
         self.dataset = self.dataset[:-1]
-        self.init_with_dataset(self.datasetdataset)
+        self.init_with_dataset(self.dataset)
 
 
 
-    def genDiscreteTwinData(self, optionsArr, attrName):
+    def genDiscreteTwinData(self, attr_index, attr_options):
         twinData = {}
         for key in optionsArr:
             twinData[str(attrName) + ' is ' + str(key)] = self.genDataWithAttr(attrName, key)

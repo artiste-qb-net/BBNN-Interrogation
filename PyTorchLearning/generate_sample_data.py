@@ -67,12 +67,12 @@ for i in range(100000):
 
 
 credit_scores = np.asarray([iter['credit_score'] for  iter in dataset])
-maxScore = np.amax(credit_scores)
-minScore = np.amin(credit_scores)
-meanScore = np.mean(credit_scores)
-medianScore = np.median(credit_scores)
-stdDeviation = np.std(credit_scores)
-stats = {'mean': meanScore, 'max': maxScore, 'min': minScore, 'median': medianScore, 'stdev': stdDeviation, 'quartile1': (meanScore-stdDeviation), 'quartile3': (meanScore+stdDeviation)}
+max_score = np.amax(credit_scores)
+min_score = np.amin(credit_scores)
+mean_score = np.mean(credit_scores)
+median_score = np.median(credit_scores)
+std_deviation = np.std(credit_scores)
+stats = {'mean': mean_score, 'max': max_score, 'min': min_score, 'median': median_score, 'stdev': std_deviation, 'quartile1': (mean_score-std_deviation), 'quartile3': (mean_score+std_deviation)}
 dataset.append(stats)
 
 
