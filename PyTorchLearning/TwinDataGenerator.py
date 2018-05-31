@@ -1,44 +1,54 @@
 import random
 import json
+from Network import Network
+from pprint import pprint
+import torch
 
 
 class TwinDataGenerator:
-    numSamples = 1000
+    num_samples = 10
+
+    def init_with_dataset(self, dataset_arr):
+        final_data = []
+        numItems = len(dataset_arr[0])
+        self.cardinalities = []
+        for c in range(numItems - 1):
+            self.cardinalities.append(set())
 
 
-    def init_with_dataset(self, datasetArr):
-        finalData = []
-        for i in range(self.numSamples):
-            finalData.append(dict(random.choice(datasetArr)))
-        self.dataset = finalData
+        for i in range(self.num_samples):
+            curr = (dict(random.choice(dataset_arr)))
+            del curr['credit_score']
+            curr = self.first_activations_func(curr)
+
+            for j in range(len(curr)):
+                self.cardinalities[j].add(curr[j].item())
+            final_data.append(curr)
+        self.dataset = final_data
 
     def __init__(self, file_name_json):
-        self.dataset = None
+        self.first_activations_func = Network.to_data_tensor
+        dataset = None
         with open(file_name_json) as f:
-            self.dataset = json.load(f)
+            dataset = json.load(f)
+        self.stats = dataset[-1]
+        dataset = dataset[:-1]
+        self.init_with_dataset(dataset)
+        pprint(self.dataset)
+        print("\n ... \n")
 
-        self.stats = self.dataset[-1]
-        self.dataset = self.dataset[:-1]
-        self.init_with_dataset(self.dataset)
-
-
-
-    def genDiscreteTwinData(self, attr_index, attr_options):
-        twinData = {}
-        for key in optionsArr:
-            twinData[str(attrName) + ' is ' + str(key)] = self.genDataWithAttr(attrName, key)
-        return twinData
-
-
-    def genDataWithAttr(self, attrName, attrValue):
-        assert len(self.dataset) > 0 and self.dataset[0].__contains__(attrName)
-        categoryData = []
+    def gen_data_with_attr(self, attr_index, attr_value):
+        assert len(self.dataset) > 0
+        assert attr_value in self.cardinalities[attr_index]
+        category_data = []
         for i in self.dataset:
-            copy = dict(i)
-            copy[attrName] = attrValue
-            categoryData.append(copy)
-            del copy['credit_score']
-        return categoryData
+            copy = torch.Tensor(i.numpy())
+            copy[attr_index] = attr_value
+            category_data.append(copy)
+        return category_data
 
 
-### Main ###
+
+
+### main ###
+

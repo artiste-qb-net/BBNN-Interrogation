@@ -1,4 +1,5 @@
 from pprint import pprint
+import numpy as np
 
 a = []
 for i in range(3):
@@ -12,4 +13,6 @@ a[1].add(67)
 a[0].add(6867)
 a[1].add(2)
 
+
 pprint(a)
+pprint(np.zeros(6))

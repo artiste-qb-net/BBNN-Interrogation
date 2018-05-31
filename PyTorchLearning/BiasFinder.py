@@ -3,93 +3,64 @@ from pprint import pprint
 import json
 import random
 import numpy as np
+from torch.autograd import Variable
+from Network import Network
+from TwinDataGenerator import TwinDataGenerator
 
 
 class BiasFinder():
+
+    activation_func = torch.nn.Sigmoid()
+
+    def set_activation_func(torch_function):
+        activation_func = torch_function
+
     def __init__(self, model_file, json_file):
-        model = torch.load(model_file)
-        self.weight_arr = []
-        self.bias_arr = []
+        self.model = Network()
+        self.model.load_state_dict(torch.load(model_file))
+        self.experiment_gen = TwinDataGenerator(json_file)
 
-        ctr = 0
-        for key in model:
-            if ctr % 2 == 0:
-                self.weight_arr.append(model[key].numpy().transpose(1, 0))
+
+
+    def approx_forward(self, input_torch_tensor):
+        out_arr = self.model.forward(input_torch_tensor)
+        largest = max(out_arr)
+        for i in range(len(out_arr)):
+            if out_arr[i] == largest:
+                out_arr[i] = 1
             else:
-                self.bias_arr.append(model[key].numpy().reshape(len(model[key]), 1))
-            ctr += 1
+                out_arr[i] = 0
+        return out_arr
+
+    def gen_attr_value_cond_prob(self, attr_index, attr_value):
+        arr = self.experiment_gen.gen_data_with_attr(attr_index, attr_value)
+        output_size = len(self.model.forward(arr[0]))
+        print(output_size)
+        a = []
+        for i in range(output_size):
+            a.append(0)
+
+        for i in arr:
+            res = self.approx_forward(i)
+            indexofone = 0
+            for j in range(len(res)):
+                if res[j] == 1:
+                    indexofone = j
+                    break
+            a[indexofone] += 1
 
 
-
-    def forward(self, input_torch_tensor):
-        curr_tensor = input_torch_tensor.numpy()
-        print(len(self.weight_arr) , "\n")
-        for i in range(len(self.weight_arr)):
-            print(i)
-            curr_tensor = np.dot(curr_tensor, self.weight_arr[i])
-            pprint(curr_tensor.shape)
-            curr_tensor = curr_tensor - self.bias_arr[i]
-        return curr_tensor
+        a = [1.0/len(arr) * i for i in a]
+        print(a)
 
 
-
-class twinDataGenerator:
-    num_samples = 1000
-
-
-
-    def init_with_dataset(self, dataset_arr):
-        final_data = []
-        numItems = len(dataset_arr[0])
-        self.cardinalities = []
-        for c in range(numItems):
-            self.cardinalities.append(set())
-
-
-        for i in range(self.num_samples):
-            curr = (dict(random.choice(dataset_arr)))
-            del curr['credit_score']
-            curr = self.first_activations_func(curr)
-            for j in range(len(curr)):
-                self.cardinalities[j].add(curr[j])
-            final_data.append(curr)
-        self.dataset = final_data
-
-    def __init__(self, file_name_json, initial_activation_func_from_dict):
-        self.first_activations_func = initial_activation_func_from_dict
-        self.dataset = None
-        with open(file_name_json) as f:
-            self.dataset = json.load(f)
-        self.stats = self.dataset[-1]
-        self.dataset = self.dataset[:-1]
-        self.init_with_dataset(self.dataset)
-
-
-
-    def gen_discrete_twin_data(self, attr_index, attr_options):
-        twin_data = {}
-        for key in optionsArr:
-            twin_data[str(attr_name) + ' is ' + str(key)] = self.genDataWithAttr(attr_name, key)
-        return twin_data
-
-
-    def gen_data_with_attr(self, attr_index, attr_value):
-        assert len(self.dataset) > 0 and self.dataset.shape[1] >= attr_index
-        category_data = []
-        for i in self.dataset:
-            copy = list(i)
-            copy[attr_index] = attr_value
-            category_data.append(copy)
-        return category_data
 
 
 bf = BiasFinder("Model.pt", "CreditScoreData.json")
 
-print("...")
-print("...")
-print("...")
+print("\n ... \n")
 
-pprint(bf.weight_arr)
-pprint(bf.bias_arr)
-pprint(bf.forward(torch.Tensor([[0, 0, 0, 0, 0, 0]])))
+bf.gen_attr_value_cond_prob(2, 0)
+
+
 
