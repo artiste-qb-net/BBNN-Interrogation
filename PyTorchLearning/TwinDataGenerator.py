@@ -6,7 +6,7 @@ import torch
 
 
 class TwinDataGenerator:
-    num_samples = 10
+    num_samples = 1000
 
     def init_with_dataset(self, dataset_arr):
         final_data = []
@@ -20,7 +20,6 @@ class TwinDataGenerator:
             curr = (dict(random.choice(dataset_arr)))
             del curr['credit_score']
             curr = self.first_activations_func(curr)
-
             for j in range(len(curr)):
                 self.cardinalities[j].add(curr[j].item())
             final_data.append(curr)
@@ -34,7 +33,6 @@ class TwinDataGenerator:
         self.stats = dataset[-1]
         dataset = dataset[:-1]
         self.init_with_dataset(dataset)
-        pprint(self.dataset)
         print("\n ... \n")
 
     def gen_data_with_attr(self, attr_index, attr_value):

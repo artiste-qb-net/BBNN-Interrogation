@@ -83,7 +83,7 @@ class Network(torch.nn.Module):
         result[5] = Network.sigmoid_race(input_dict['race'])
         return torch.from_numpy(result).float()
 
-    def genDataSetFromJson(fileName_str):
+    def gen_data_set_from_json(fileName_str):
         dataset = []
 
         with open(fileName_str) as f:
@@ -145,7 +145,7 @@ class Network(torch.nn.Module):
         self.layer4 = torch.nn.Linear(16, 3)
 
     def train(self, data_file_json):
-        self.input_tensor, self.output_tensor = Network.genDataSetFromJson(data_file_json)
+        self.input_tensor, self.output_tensor = Network.gen_data_set_from_json(data_file_json)
 
         self.optimizer = torch.optim.SGD(self.parameters(), self.learning_rate)
 

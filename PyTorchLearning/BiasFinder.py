@@ -33,6 +33,7 @@ class BiasFinder():
         return out_arr
 
     def gen_attr_value_cond_prob(self, attr_index, attr_value):
+        result = {}
         arr = self.experiment_gen.gen_data_with_attr(attr_index, attr_value)
         output_size = len(self.model.forward(arr[0]))
         print(output_size)
@@ -53,6 +54,25 @@ class BiasFinder():
         a = [1.0/len(arr) * i for i in a]
         print(a)
 
+        for i in range(len(a)):
+            key = "P(Output index is " + str(i) + "| Input index " + str(attr_index) + " has value " + str(attr_value) +")"
+            result[key] = a[i]
+        return result
+
+    def gen_attr_cond_probs(self, attr_index):
+        result = {}
+        for i in self.experiment_gen.cardinalities[attr_index]:
+            result.update(self.gen_attr_value_cond_prob(attr_index, i))
+
+        return result
+
+    def gen_all_cond_probs(self):
+        result = {}
+        for i in range(len(self.experiment_gen.cardinalities)):
+            a = self.gen_attr_cond_probs(i)
+            result.update(a)
+        return result
+
 
 
 
@@ -60,7 +80,8 @@ bf = BiasFinder("Model.pt", "CreditScoreData.json")
 
 print("\n ... \n")
 
-bf.gen_attr_value_cond_prob(2, 0)
+pprint(bf.gen_all_cond_probs())
+
 
 
 

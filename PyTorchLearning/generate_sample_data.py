@@ -34,14 +34,14 @@ class CSFaker:
             base *= 1.25
         else:
             base *= 1.5
-        
+
         if(race == 'almond'):
             base*= 0.5
         elif (race == 'quaker'):
             base *= 1.5
         else:
             pass
-        
+
         if(gender == 1):
             base *= 1.25
         else:
@@ -52,34 +52,33 @@ class CSFaker:
 
         return {"name": name, "citizenship": citizenship, 'age': age, 'education': education, 'race': race, 'gender': gender, 'credit_score': credit_score}
 
-        def generate():
-            dataset = []
+    def generate():
+        dataset = []
 
-            for i in range(100000):
-                print(i)
-                c = CSFaker()
-                dataset.append(c.generator())
+        for i in range(100000):
+            c = CSFaker()
+            dataset.append(c.generator())
 
-            credit_scores = np.asarray([iter['credit_score'] for iter in dataset])
-            max_score = np.amax(credit_scores)
-            min_score = np.amin(credit_scores)
-            mean_score = np.mean(credit_scores)
-            median_score = np.median(credit_scores)
-            std_deviation = np.std(credit_scores)
-            stats = {'mean': mean_score, 'max': max_score, 'min': min_score, 'median': median_score,
-                     'stdev': std_deviation, 'quartile1': (mean_score - std_deviation),
-                     'quartile3': (mean_score + std_deviation)}
-            dataset.append(stats)
+        credit_scores = np.asarray([iter['credit_score'] for iter in dataset])
+        max_score = np.amax(credit_scores)
+        min_score = np.amin(credit_scores)
+        mean_score = np.mean(credit_scores)
+        median_score = np.median(credit_scores)
+        std_deviation = np.std(credit_scores)
+        stats = {'mean': mean_score, 'max': max_score, 'min': min_score, 'median': median_score,
+                 'stdev': std_deviation, 'quartile1': (mean_score - std_deviation),
+                 'quartile3': (mean_score + std_deviation)}
+        dataset.append(stats)
 
-            with open('CreditScoreData.json', 'w') as outfile:
-                json.dump(dataset, outfile)
+        with open('CreditScoreData.json', 'w') as outfile:
+            json.dump(dataset, outfile)
 
-            print(dataset)
+        print(dataset[-1])
 
-            print(dataset[-1])
+        plt.hist(credit_scores, bins='auto')  # arguments are passed to np.histogram
+        plt.title("Simulated Credit score on simulated data")
+        plt.xlabel("credit score")
+        plt.ylabel("frequency")
+        plt.show()
 
-            plt.hist(credit_scores, bins='auto')  # arguments are passed to np.histogram
-            plt.title("Simulated Credit score on simulated data")
-            plt.xlabel("credit score")
-            plt.ylabel("frequency")
-            plt.show()
+CSFaker.generate()
