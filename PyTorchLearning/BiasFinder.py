@@ -19,6 +19,7 @@ class BiasFinder():
         self.model = Network()
         self.model.load_state_dict(torch.load(model_file))
         self.experiment_gen = TwinDataGenerator(json_file)
+        self.output = self.gen_all_cond_probs()
 
 
 
@@ -63,7 +64,6 @@ class BiasFinder():
         result = {}
         for i in self.experiment_gen.cardinalities[attr_index]:
             result.update(self.gen_attr_value_cond_prob(attr_index, i))
-
         return result
 
     def gen_all_cond_probs(self):
@@ -71,14 +71,17 @@ class BiasFinder():
         for i in range(len(self.experiment_gen.cardinalities)):
             a = self.gen_attr_cond_probs(i)
             result.update(a)
-        return result
 
+        json_arr = [result]
+        with open('ConditionalProbabilities.json', 'w') as outfile:
+            json.dump(json_arr, outfile)
+
+        return result
 
 
 
 bf = BiasFinder("Model.pt", "CreditScoreData.json")
 
-print("\n ... \n")
 
 pprint(bf.gen_all_cond_probs())
 

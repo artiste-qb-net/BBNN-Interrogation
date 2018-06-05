@@ -6,7 +6,7 @@ import torch
 
 
 class TwinDataGenerator:
-    num_samples = 1000
+    num_samples = 5000
 
     def init_with_dataset(self, dataset_arr):
         final_data = []
@@ -45,7 +45,18 @@ class TwinDataGenerator:
             category_data.append(copy)
         return category_data
 
+    def gen_data_with_attributes(self, attr_index_value_dict):
+        category_data = []
+        for i in self.dataset:
+            copy = torch.Tensor(i.numpy())
+            for i in attr_index_value_dict:
+                copy[i] = attr_index_value_dict[i]
+            category_data.append(copy)
+        return category_data
 
+
+    def get_dataset(self):
+        return self.dataset
 
 
 ### main ###

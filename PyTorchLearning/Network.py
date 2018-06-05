@@ -39,8 +39,14 @@ class Network(torch.nn.Module):
     educ = ['High School', 'college', 'masters', 'phd', 'genius']
     educationDict = generate_dict_from_discrete(educ)
 
-    ######### Sigmoid/Relu functions for The different vairables############
+    ######## Learning Statics################
 
+    activation_func = torch.nn.Sigmoid()
+    criterion_func = torch.nn.BCELoss(size_average=True)  ### Try and change this to BCE Loss
+    learning_rate = 0.15
+
+
+    ######### Initial activation functions for The different vairables############
     def sigmoid_race(race_str):
         return Network.racesDict[race_str]
 
@@ -117,23 +123,20 @@ class Network(torch.nn.Module):
         return in_data, out_data
 
 
+
     def check(self):
-        print(self.forward(self.input_tensor[0]))
-        print(self.forward(self.input_tensor[1]))
-        print(self.forward(self.input_tensor[2]))
-        print("...")
-        print(self.forward(self.input_tensor[len(self.input_tensor) - 3]))
-        print(self.forward(self.input_tensor[len(self.input_tensor) - 2]))
-        print(self.forward(self.input_tensor[len(self.input_tensor) - 1]))
+        pprint(self.forward(self.input_tensor[0]))
+        pprint(self.forward(self.input_tensor[1]))
+        pprint(self.forward(self.input_tensor[2]))
+        pprint("...")
+        pprint(self.forward(self.input_tensor[len(self.input_tensor) - 3]))
+        pprint(self.forward(self.input_tensor[len(self.input_tensor) - 2]))
+        pprint(self.forward(self.input_tensor[len(self.input_tensor) - 1]))
 
-        print(self.input_tensor)
-        print(self.output_tensor)
-        print("parameters: ", self.parameters())
+        pprint(self.input_tensor)
+        pprint(self.output_tensor)
+        pprint("parameters: ", self.parameters())
 
-
-    activation_func = torch.nn.Sigmoid()
-    criterion_func = torch.nn.BCELoss(size_average=True)  ### Try and change this to BCE Loss
-    learning_rate = 0.15
 
     def __init__(self):
 
@@ -143,6 +146,15 @@ class Network(torch.nn.Module):
         self.layer2 = torch.nn.Linear(16, 16)
         self.layer3 = torch.nn.Linear(16, 16)
         self.layer4 = torch.nn.Linear(16, 3)
+
+    def forward(self, input_data):
+        out1 = self.activation_func(self.layer1(input_data))  # self.layer1(input_data)
+        out2 = self.activation_func(self.layer2(out1))  # self.layer2(out1)
+        out3 = self.activation_func(self.layer3(out2))  # self.layer3(out2)
+        out4 = self.activation_func(self.layer4(out3))  # self.layer4(out3)
+
+        prediction = out4
+        return prediction
 
     def train(self, data_file_json):
         self.input_tensor, self.output_tensor = Network.gen_data_set_from_json(data_file_json)
@@ -160,16 +172,6 @@ class Network(torch.nn.Module):
             self.optimizer.step()
 
         torch.save(self.state_dict(), "Model.pt")
-
-    def forward(self, input_data):
-
-        out1 = self.activation_func(self.layer1(input_data))  # self.layer1(input_data)
-        out2 = self.activation_func(self.layer2(out1))  # self.layer2(out1)
-        out3 = self.activation_func(self.layer3(out2))  # self.layer3(out2)
-        out4 = self.activation_func(self.layer4(out3))  # self.layer4(out3)
-
-        prediction = out4
-        return prediction
 
 
 '''
@@ -191,7 +193,7 @@ class Network(torch.nn.Module):
 
     OUTPUT DATA TENSOR:
 
-    Index:       0                      1
+    Index:       0                       1                    2
             < quartile1 || > quartile1 and < quartile3 || > quartile3
     1
     -
@@ -207,7 +209,8 @@ class Network(torch.nn.Module):
 '''
 ### Main ###
 
-
+net = Network()
+net.train("CreditScoreData.json")
 
 ##print("parameters: ",  network.parameters())
 
