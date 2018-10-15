@@ -70,8 +70,6 @@ class CSFaker:
                  'quartile3': (mean_score + std_deviation)}
         dataset.append(stats)
 
-        with open('CreditScoreData.json', 'w') as outfile:
-            json.dump(dataset, outfile)
 
         print(dataset[-1])
 

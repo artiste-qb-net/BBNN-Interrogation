@@ -1,24 +1,16 @@
 import torch
 from pprint import pprint
 import json
-import random
-import numpy as np
-from torch.autograd import Variable
 from Network import Network
 from TwinDataGenerator import TwinDataGenerator
 
 
 class BiasFinder():
 
-    activation_func = torch.nn.Sigmoid()
-
-    def set_activation_func(torch_function):
-        activation_func = torch_function
-
-    def __init__(self, model_file, json_file):
+    def __init__(self, model_file, json_file, model_cardinalities):
         self.model = Network()
         self.model.load_state_dict(torch.load(model_file))
-        self.experiment_gen = TwinDataGenerator(json_file)
+        self.experiment_gen = TwinDataGenerator(model_cardinalities)
         self.output = self.gen_all_cond_probs()
 
 
@@ -33,7 +25,8 @@ class BiasFinder():
                 out_arr[i] = 0
         return out_arr
 
-    def gen_attr_value_cond_prob(self, attr_index, attr_value):
+    def gen_attr_value_cond_prob(self, attr_index_value_dict):
+        assert att
         result = {}
         arr = self.experiment_gen.gen_data_with_attr(attr_index, attr_value)
         output_size = len(self.model.forward(arr[0]))
@@ -56,7 +49,7 @@ class BiasFinder():
         print(a)
 
         for i in range(len(a)):
-            key = "P(Output index is " + str(i) + "| Input index " + str(attr_index) + " has value " + str(attr_value) +")"
+            key = "P(Output index is " + str(i) + "| Input indeces" + str(attr_index) + " has value " + str(attr_value) +")"
             result[key] = a[i]
         return result
 
@@ -66,6 +59,7 @@ class BiasFinder():
             result.update(self.gen_attr_value_cond_prob(attr_index, i))
         return result
 
+    '''
     def gen_all_cond_probs(self):
         result = {}
         for i in range(len(self.experiment_gen.cardinalities)):
@@ -78,13 +72,28 @@ class BiasFinder():
 
         return result
 
+    '''
+    def gen_all_cond_probs(self):
+        result = []
+        all_tensors = self.experiment_gen.get_all_options()
+        print(len(all_tensors))
+        for option in all_tensors:
+            input = TwinDataGenerator.get_tensor_from_dict(option)
+            output = self.model.forward(input)
+            for i in range(len(output)):
+                current = "P[(Ouput is " + str(i) + ") | (inputs are: " + str(option) + ")]"
+                result.append(current)
+        return result
 
 
-bf = BiasFinder("Model.pt", "CreditScoreData.json")
 
 
-pprint(bf.gen_all_cond_probs())
 
+bf = BiasFinder("Model.pt", "CreditScoreData.json", Network.get_cardinalities())
+
+result = bf.gen_all_cond_probs()
+with open("AllCondProbs.json", 'w') as outfile:
+    json.dump(result, outfile)
 
 
 

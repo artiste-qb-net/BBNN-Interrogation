@@ -5,7 +5,6 @@ import numpy as np
 from pprint import pprint
 
 
-
 ####### Network Object Definition ##############
 
 class Network(torch.nn.Module):
@@ -58,6 +57,7 @@ class Network(torch.nn.Module):
             return 1
         else:
             return Network.citizenshipDict[citizenship_str]
+
 
     def sigmoid_age(age_float):
         if age_float <= 18:
@@ -173,6 +173,8 @@ class Network(torch.nn.Module):
 
         torch.save(self.state_dict(), "Model.pt")
 
+    def get_cardinalities():
+        return {0: range(0,15, 2), 1: Network.citizenshipDict.values(), 2: [0, 1], 3: Network.educationDict.values(), 4: range(18, 80, 5), 5: Network.racesDict.values()}
 
 '''
     data converted to 2D Numpy array
@@ -210,7 +212,12 @@ class Network(torch.nn.Module):
 ### Main ###
 
 net = Network()
-net.train("CreditScoreData.json")
+#net.train("CreditScoreData.json")
+
+pprint(Network.citizenshipDict)
+pprint(Network.citizenshipDict.values())
+
+
 
 ##print("parameters: ",  network.parameters())
 

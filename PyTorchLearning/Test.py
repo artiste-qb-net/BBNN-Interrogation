@@ -1,9 +1,12 @@
 from pprint import pprint
 import numpy as np
+import torch
+
 
 a = []
 for i in range(3):
     a.append(set())
+
 a[2].add(2)
 a[1].add(67)
 a[0].add(2)
